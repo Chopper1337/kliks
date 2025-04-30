@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+MOUSE_BUTTON=1
+DMAXS=0.16
+DMINS=0.08
+DURATION=$(echo "scale=3; $(awk -v min=$DMINS -v max=$DMAXS 'BEGIN{srand(); print min + (rand() * (max - min))}')" | bc)
+VERBOSE=false
+
+help ()
+{
+  echo "Usage: $0 [OPTIONS]"
+  echo ""
+  echo "Simulates a mouse button click using xdotool by holding down the specified mouse button"
+  echo "for a given duration. The duration can be set as a fixed value or defaults to a random value computed"
+  echo "between a predefined minimum and maximum (0.08 and 0.26 seconds)."
+  echo ""
+  echo "Options:"
+  echo "  -b BUTTON    Set mouse button to use (must be a number between 1 and 5)."
+  echo "               Defaults to 1"
+  echo "  -d DURATION  Specify the duration (in seconds) for which the mouse button is held down."
+  echo "               This must be a positive number. Otherwise, a random duration between 0.1 and"
+  echo "               0.25 seconds will be used."
+  echo "  -v           Enable verbose output. When enabled, prints the effective mouse button and duration."
+  echo "  -h           Print this help message and exit."
+  echo ""
+  echo "Examples:"
+  echo "  $0 "
+  echo "  $0 -b 2 -d 0.3 -v"
+  echo ""
+  echo "This will simulate pressing the second mouse button for 0.3 seconds while printing the details."
+  exit
+}
+
+while getopts "hb:d:v" opt; do
+    case $opt in
+        h)
+            help
+            ;;
+        b)
+            if [[ "$OPTARG" =~ ^[1-5]$ ]]; then
+                MOUSE_BUTTON=$OPTARG
+            else
+                echo "Error: MOUSE_BUTTON must be a number between 1 and 5."
+                exit 1
+            fi
+            ;;
+        d)
+            if [[ "$OPTARG" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+                DURATION=$OPTARG
+            else
+                echo "Error: DURATION must be a positive number."
+                exit 1
+            fi
+            ;;
+        v)
+            VERBOSE=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
+done
+
+$VERBOSE && echo "Mouse Button: $MOUSE_BUTTON"
+$VERBOSE && echo "Duration: $DURATION"
+
+xdotool mousedown $MOUSE_BUTTON
+sleep $DURATION
+xdotool mouseup $MOUSE_BUTTON
