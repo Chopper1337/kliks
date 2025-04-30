@@ -24,8 +24,8 @@ help ()
   echo "  -h           Print this help message and exit."
   echo ""
   echo "Examples:"
-  echo "  $0 "
-  echo "  $0 -b 2 -d 0.3 -v"
+  echo "  Click mouse 1 for a time between $DMINS and $DMAXS: $0 "
+  echo "  Click mouse 2 for 0.3 seconds with verbose output: $0 -b 2 -d 0.3 -v"
   echo ""
   echo "This will simulate pressing the second mouse button for 0.3 seconds while printing the details."
   exit
