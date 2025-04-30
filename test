@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+echo "Instructions:"
+echo "----------------------------------------------------------------"
+echo "Click within the Event Tester window"
+echo "Record any number of clicks, more is better"
+echo "Once you're finished, close the Event Tester window"
+echo "Try not to click at any different rate or duration from normal"
+echo "After the summary is reported, use the outputted values with klik"
+echo "----------------------------------------------------------------"
+echo "There will not be any output until the Event Tester window is closed"
+echo "Starting now..."
+
+# Capture both press and release events.
+recorded=$(xev -event mouse | grep --line-buffered -E "ButtonPress|ButtonRelease" -A 2 | grep "time" | awk '{print $6}' | sed 's/,$//')
+echo ""
+
+# Put the recorded times into an array
+click_times=()
+for time in $recorded; do
+  click_times+=("$time")
+done
+
+# Check if we have an even number of events for pairs
+num_events=${#click_times[@]}
+if (( num_events % 2 != 0 )); then
+  echo "Warning: An odd number of events were recorded; the last event will be ignored."
+  ((num_events--))
+fi
+
+min_duration=-1
+max_duration=0
+sum_duration=0
+click_pair_count=0
+
+for (( i=0; i<num_events; i+=2 )); do
+  mouse_down="${click_times[i]}"
+  mouse_up="${click_times[i+1]}"
+  
+  # Compute the click duration
+  duration=$(( mouse_up - mouse_down ))
+  
+  if (( min_duration == -1 || duration < min_duration )); then
+    min_duration=$duration
+  fi
+  
+  if (( duration > max_duration )); then
+    max_duration=$duration
+  fi
+  
+  sum_duration=$(( sum_duration + duration ))
+  ((click_pair_count++))
+done
+
+if (( click_pair_count == 0 )); then
+  echo "No complete click events were recorded."
+  exit 1
+fi
+
+average_duration=$(echo "scale=2; $sum_duration / $click_pair_count" | bc)
+
+echo "---------------------------------"
+echo "Click Statistics:"
+echo "Total complete clicks (down & up pairs): $click_pair_count"
+echo "Minimum click duration: ${min_duration} ms"
+echo "Maximum click duration: ${max_duration} ms"
+echo "Average click duration: ${average_duration} ms"
+echo "---------------------------------"
