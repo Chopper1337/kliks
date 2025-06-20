@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
 MOUSE_BUTTON=1
-DMAXS=0.16
-DMINS=0.08
-DURATION=$(echo "scale=3; $(awk -v min=$DMINS -v max=$DMAXS 'BEGIN{srand(); print min + (rand() * (max - min))}')" | bc)
+DMAXS=0.11
+DMINS=0.03
+DURATION=$(
+  MS=$(date +%s%3N)
+  awk -v seed="$MS" -v min="$DMINS" -v max="$DMAXS" '
+  BEGIN {
+    srand(seed)                    # seed with millisecond timestamp
+    dur = min + rand()*(max - min) # uniform float in [min, max)
+    printf("%.5f\n", dur - 0.008)
+  }'
+)
 VERBOSE=false
 
 help ()
