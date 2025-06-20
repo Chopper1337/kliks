@@ -20,7 +20,7 @@ help ()
   echo ""
   echo "Simulates a mouse button click using xdotool by holding down the specified mouse button"
   echo "for a given duration. The duration can be set as a fixed value or defaults to a random value computed"
-  echo "between a predefined minimum and maximum (0.08 and 0.26 seconds)."
+  echo "between a predefined minimum and maximum (0.03 and 0.11 seconds)."
   echo ""
   echo "Options:"
   echo "  -b BUTTON    Set mouse button to use (must be a number between 1 and 5)."
