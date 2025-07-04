@@ -23,8 +23,12 @@ end
 function kliks.on_scripts_loaded( )
   fantasy.log("checking if kliks enabled...")
   if not kliks.enabled then return end
-  override_mouse_click = script .. " -b {}"
-  fantasy.log("override_mouse_click = {}", override_mouse_click)
+  local omc = script .. " -b {}"
+  fantasy.set_global(
+        "override_mouse_click",
+        omc
+    )
+  fantasy.log("override_mouse_click = {}", omc)
   fantasy.log("kliks enabled...")
 end
 
