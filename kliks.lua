@@ -10,24 +10,24 @@ local kliks = {
   enabled = true
 }
 
-function kliks.on_loaded( )
-	if os ~= "linux" then return false end
+function kliks.on_loaded()
+  if os ~= "linux" then return false end
   if file:exists(script) then return end
   file:create_directory(directories["this"])
   http:to_file("https://raw.githubusercontent.com/Chopper1337/kliks/refs/heads/main/klik", script)
-	fantasy.log("downloaded kliks")
-  fantasy.terminal( fantasy.fmt( "chmod +x \"{}\"", script ) )
-	fantasy.log("kliks made executable")
+  fantasy.log("downloaded kliks")
+  fantasy.terminal(fantasy.fmt("chmod +x \"{}\"", script))
+  fantasy.log("kliks made executable")
 end
 
-function kliks.on_scripts_loaded( )
+function kliks.on_scripts_loaded()
   fantasy.log("checking if kliks enabled...")
   if not kliks.enabled then return end
   local omc = script .. " -b {}"
   fantasy.set_global(
-        "override_mouse_click",
-        omc
-    )
+    "override_mouse_click",
+    omc
+  )
   fantasy.log("override_mouse_click = {}", omc)
   fantasy.log("kliks enabled...")
 end
