@@ -24,10 +24,7 @@ function kliks.on_scripts_loaded()
   fantasy.log("checking if kliks enabled...")
   if not kliks.enabled then return end
   local omc = script .. " -b {}"
-  fantasy.set_global(
-    "override_mouse_click",
-    omc
-  )
+  fantasy.configuration:set(MEM_STRING, "os.lua", "override_mouse_click", omc);
   fantasy.log("override_mouse_click = {}", omc)
   fantasy.log("kliks enabled...")
 end
